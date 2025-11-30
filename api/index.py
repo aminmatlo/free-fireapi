@@ -77,20 +77,42 @@ def GetLoginData(payload, headers):
     response = requests.post(url, headers=headers, data=payload, verify=False)
     return response.content
 
+
 @app.route('/GetLoginData', methods=['POST'])
 def MajorLoginProxy():
     payload = request.get_data()
     headers = request.headers
+
     x = decrypt_api(payload.hex())
     json_result = get_available_room(x)
     parsed_data = json.loads(json_result)
+
     NEW_ACCESS_TOKEN = parsed_data["29"]["data"]
     NEW_EXTERNAL_ID = parsed_data["22"]["data"]
-    PAYLOAD = b':\x071.118.1\xaa\x01\x02ar\xb2\x01 55ed759fcf94f85813e57b2ec8492f5c\xba\x01\x014\xea\x01@6fb7fdef8658fd03174ed551e82b71b21db8187fa0612c8eaf1b63aa687f1eae\x9a\x06\x014\xa2\x06\x014'
-    PAYLOAD = PAYLOAD.replace(b"6fb7fdef8658fd03174ed551e82b71b21db8187fa0612c8eaf1b63aa687f1eae", NEW_ACCESS_TOKEN.encode("UTF-8"))
-        PAYLOAD = PAYLOAD.replace(b"55ed759fcf94f85813e57b2ec8492f5c", NEW_EXTERNAL_ID.encode("UTF-8"))
-PAYLOAD = PAYLOAD.hex()
-        PAYLOAD = encrypt_api(PAYLOAD)
-        PAYLOAD = bytes.fromhex(PAYLOAD)
-    response_data = MajorLogin(PAYLOAD, headers)
+
+    PAYLOAD = (
+        b':\x071.118.1'
+        b'\xaa\x01\x02ar'
+        b'\xb2\x01 55ed759fcf94f85813e57b2ec8492f5c'
+        b'\xba\x01\x014'
+        b'\xea\x01@6fb7fdef8658fd03174ed551e82b71b21db8187fa0612c8eaf1b63aa687f1eae'
+        b'\x9a\x06\x014'
+        b'\xa2\x06\x014'
+    )
+
+    PAYLOAD = PAYLOAD.replace(
+        b"6fb7fdef8658fd03174ed551e82b71b21db8187fa0612c8eaf1b63aa687f1eae",
+        NEW_ACCESS_TOKEN.encode("utf-8")
+    )
+
+    PAYLOAD = PAYLOAD.replace(
+        b"55ed759fcf94f85813e57b2ec8492f5c",
+        NEW_EXTERNAL_ID.encode("utf-8")
+    )
+
+    PAYLOAD = PAYLOAD.hex()
+    PAYLOAD = encrypt_api(PAYLOAD)
+    PAYLOAD = bytes.fromhex(PAYLOAD)
+
+    response_data = GetLoginData(PAYLOAD, headers)
     return response_data
