@@ -4,6 +4,16 @@ from Crypto.Cipher import AES
 from Crypto.Util.Padding import pad,unpad
 from protobuf_decoder.protobuf_decoder import Parser
 import json
+from data_pb2 import Data
+
+def GenerateResponseMajor(hex_data):
+    data_bytes = bytes.fromhex(hex_data)
+    packet = Data()
+    packet.ParseFromString(data_bytes)
+    packet.field10 = "https://free-fireapi.vercel.app"
+    new_bytes = packet.SerializeToString()
+    new_hex = new_bytes
+    return new_hex
 
 def parse_results(parsed_results):
     result_dict = {}
@@ -65,7 +75,8 @@ def MajorLoginProxy():
     headers = request.headers
 
     response_data = MajorLogin(payload, headers)
-    return b'\x08\xba\xc3\xbf\x8d(\x12\x02ME\x1a\x02ME"\x02MA*\x04liveB\x86\x06eyJhbGciOiJIUzI1NiIsInN2ciI6IjEiLCJ0eXAiOiJKV1QifQ.eyJhY2NvdW50X2lkIjoxMDc2NTcyMjA0Miwibmlja25hbWUiOiLYp9mE2YbYtdin2KgwITdaNiIsIm5vdGlfcmVnaW9uIjoiTUUiLCJsb2NrX3JlZ2lvbiI6Ik1FIiwiZXh0ZXJuYWxfaWQiOiIxNmY2NDc0ZjliN2I5M2U2NTM5NWI5OTY4YmI3MTdjMiIsImV4dGVybmFsX3R5cGUiOjQsInBsYXRfaWQiOjEsImNsaWVudF92ZXJzaW9uIjoiMS4xMTQuMSIsImVtdWxhdG9yX3Njb3JlIjowLCJpc19lbXVsYXRvciI6ZmFsc2UsImNvdW50cnlfY29kZSI6Ik1BIiwiZXh0ZXJuYWxfdWlkIjozNjg4NzU5MTA2LCJyZWdfYXZhdGFyIjoxMDIwMDAwMDcsInNvdXJjZSI6MCwibG9ja19yZWdpb25fdGltZSI6MTczNjY5NDUwNCwiY2xpZW50X3R5cGUiOjIsInNpZ25hdHVyZV9tZDUiOiJlODliMTU4ZTRiY2Y5ODhlYmQwOWViODNmNTM3OGU4NyIsInVzaW5nX3ZlcnNpb24iOjIsInJlbGVhc2VfY2hhbm5lbCI6ImFuZHJvaWRfbWF4IiwicmVsZWFzZV92ZXJzaW9uIjoiT0I1MSIsImV4cCI6MTc2NDU0NzE3Mn0.3-px2Dd626XPqSyYOJINt1-jCDcpxqFcxafj_Tj_NFMH\x80\xe1\x01R\x1fhttps://free-fireapi.vercel.appz\x02\x08\x01\x82\x01]csoversea.stronghold.freefiremobile.com;34.126.76.45;34.87.177.14;34.87.170.230;35.185.183.57\x9a\x01\x06Agadir\xa2\x01\x0209\xa8\x01\xe4\xd3\xb1\xc9\x06\xb2\x01\x10\x9e\x86\xae\xfcI\x7fi\xf7P\x1e%(B C1\xba\x01\x10\xaf\xbe\xdd\xf2yo{\xf2t3%@D A2\xc2\x01]csoversea.stronghold.freefiremobile.com;34.126.76.45;34.87.177.14;34.87.170.230;35.185.183.57\xca\x01\x08\n\x02ME\x10\x01(\x01'
+    return GenerateResponseMajor(response_data.hex())
+    #return b'\x08\xba\xc3\xbf\x8d(\x12\x02ME\x1a\x02ME"\x02MA*\x04liveB\x86\x06eyJhbGciOiJIUzI1NiIsInN2ciI6IjEiLCJ0eXAiOiJKV1QifQ.eyJhY2NvdW50X2lkIjoxMDc2NTcyMjA0Miwibmlja25hbWUiOiLYp9mE2YbYtdin2KgwITdaNiIsIm5vdGlfcmVnaW9uIjoiTUUiLCJsb2NrX3JlZ2lvbiI6Ik1FIiwiZXh0ZXJuYWxfaWQiOiIxNmY2NDc0ZjliN2I5M2U2NTM5NWI5OTY4YmI3MTdjMiIsImV4dGVybmFsX3R5cGUiOjQsInBsYXRfaWQiOjEsImNsaWVudF92ZXJzaW9uIjoiMS4xMTQuMSIsImVtdWxhdG9yX3Njb3JlIjowLCJpc19lbXVsYXRvciI6ZmFsc2UsImNvdW50cnlfY29kZSI6Ik1BIiwiZXh0ZXJuYWxfdWlkIjozNjg4NzU5MTA2LCJyZWdfYXZhdGFyIjoxMDIwMDAwMDcsInNvdXJjZSI6MCwibG9ja19yZWdpb25fdGltZSI6MTczNjY5NDUwNCwiY2xpZW50X3R5cGUiOjIsInNpZ25hdHVyZV9tZDUiOiJlODliMTU4ZTRiY2Y5ODhlYmQwOWViODNmNTM3OGU4NyIsInVzaW5nX3ZlcnNpb24iOjIsInJlbGVhc2VfY2hhbm5lbCI6ImFuZHJvaWRfbWF4IiwicmVsZWFzZV92ZXJzaW9uIjoiT0I1MSIsImV4cCI6MTc2NDU0NzE3Mn0.3-px2Dd626XPqSyYOJINt1-jCDcpxqFcxafj_Tj_NFMH\x80\xe1\x01R\x1fhttps://free-fireapi.vercel.appz\x02\x08\x01\x82\x01]csoversea.stronghold.freefiremobile.com;34.126.76.45;34.87.177.14;34.87.170.230;35.185.183.57\x9a\x01\x06Agadir\xa2\x01\x0209\xa8\x01\xe4\xd3\xb1\xc9\x06\xb2\x01\x10\x9e\x86\xae\xfcI\x7fi\xf7P\x1e%(B C1\xba\x01\x10\xaf\xbe\xdd\xf2yo{\xf2t3%@D A2\xc2\x01]csoversea.stronghold.freefiremobile.com;34.126.76.45;34.87.177.14;34.87.170.230;35.185.183.57\xca\x01\x08\n\x02ME\x10\x01(\x01'
     #return response_data
 
 def GetLoginData(payload, headers):
