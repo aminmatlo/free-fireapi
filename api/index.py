@@ -1,5 +1,6 @@
 from flask import Flask, request, Response
 import requests
+from data_pb2 import Data
 
 app = Flask(__name__)
 
@@ -20,5 +21,8 @@ def MajorLoginProxy():
     headers = request.headers
 
     response_data = MajorLogin(payload, headers)
-
-    return response_data
+    data_bytes = bytes.fromhex(response_data.hex())
+    packet = Data()
+    packet.ParseFromString(data_bytes)
+    packet.field10 = "https://free-fireapi.vercel.app"
+    return packet.SerializeToString()
