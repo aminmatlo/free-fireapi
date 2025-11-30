@@ -79,7 +79,7 @@ def GetLoginData(payload, headers):
 
 
 @app.route('/GetLoginData', methods=['POST'])
-def MajorLoginProxy():
+def GetLoginDataLoginProxy():
     payload = request.get_data()
     headers = request.headers
 
