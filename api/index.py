@@ -31,6 +31,20 @@ def get_available_room(input_text):
     except Exception as e:
         print(f"error {e}")
         return None
+def encrypt_api(plain_text):
+    plain_text = bytes.fromhex(plain_text)
+    key = bytes([89, 103, 38, 116, 99, 37, 68, 69, 117, 104, 54, 37, 90, 99, 94, 56])
+    iv = bytes([54, 111, 121, 90, 68, 114, 50, 50, 69, 51, 121, 99, 104, 106, 77, 37])
+    cipher = AES.new(key, AES.MODE_CBC, iv)
+    cipher_text = cipher.encrypt(pad(plain_text, AES.block_size))
+    return cipher_text.hex()    
+
+def decrypt_api(cipher_text):
+    key = bytes([89, 103, 38, 116, 99, 37, 68, 69, 117, 104, 54, 37, 90, 99, 94, 56])
+    iv = bytes([54, 111, 121, 90, 68, 114, 50, 50, 69, 51, 121, 99, 104, 106, 77, 37])
+    cipher = AES.new(key, AES.MODE_CBC, iv)
+    plain_text = unpad(cipher.decrypt(bytes.fromhex(cipher_text)), AES.block_size)
+    return plain_text.hex()    
 
 app = Flask(__name__)
 
@@ -51,4 +65,32 @@ def MajorLoginProxy():
     headers = request.headers
 
     response_data = MajorLogin(payload, headers)
+    return response_data
+
+def GetLoginData(payload, headers):
+    url = "https://loginbp.ggpolarbear.com/GetLoginData"
+
+    headers = dict(headers)
+    headers.pop("Host", None)
+    headers.pop("Content-Length", None)
+
+    response = requests.post(url, headers=headers, data=payload, verify=False)
+    return response.content
+
+@app.route('/GetLoginData', methods=['POST'])
+def MajorLoginProxy():
+    payload = request.get_data()
+    headers = request.headers
+    x = decrypt_api(payload.hex())
+    json_result = get_available_room(x)
+    parsed_data = json.loads(json_result)
+    NEW_ACCESS_TOKEN = parsed_data["29"]["data"]
+    NEW_EXTERNAL_ID = parsed_data["22"]["data"]
+    PAYLOAD = b':\x071.118.1\xaa\x01\x02ar\xb2\x01 55ed759fcf94f85813e57b2ec8492f5c\xba\x01\x014\xea\x01@6fb7fdef8658fd03174ed551e82b71b21db8187fa0612c8eaf1b63aa687f1eae\x9a\x06\x014\xa2\x06\x014'
+    PAYLOAD = PAYLOAD.replace(b"6fb7fdef8658fd03174ed551e82b71b21db8187fa0612c8eaf1b63aa687f1eae", NEW_ACCESS_TOKEN.encode("UTF-8"))
+        PAYLOAD = PAYLOAD.replace(b"55ed759fcf94f85813e57b2ec8492f5c", NEW_EXTERNAL_ID.encode("UTF-8"))
+PAYLOAD = PAYLOAD.hex()
+        PAYLOAD = encrypt_api(PAYLOAD)
+        PAYLOAD = bytes.fromhex(PAYLOAD)
+    response_data = MajorLogin(PAYLOAD, headers)
     return response_data
